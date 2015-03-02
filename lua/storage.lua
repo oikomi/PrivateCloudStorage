@@ -1,10 +1,14 @@
 
-local BASE_DIR = "/mh/PrivateCloudStorage/data"
+local BASE_DIR = "/home/data"
 
 local lfs = require("lfs")
 local cjson = require("cjson")
 
 local file_list_data = {}
+
+local function get_modification(path)
+	return lfs.attributes(path).modification
+end
 
 local function get_type(path)
 	return lfs.attributes(path).mode
@@ -31,23 +35,6 @@ local function get_name(str)
 end
 
 local function scan_dir(relative_path)
---[[ 	local table = "{"
-	for file in lfs.dir(path) do
-		p = path .. "/" .. file
-		if file ~= "." and file ~= '..' then
-			if isDir(p) then
-				s = "{'text':'".. file .. "','type':'" .. getType(p) .. "','path':'" .. p .. "','children':[]},"
-			else
-				s = "{'text':'".. file .. "','type':'" .. getType(p) .. "','path':'" .. p .. "','size':" .. getSize(p) .. ",'leaf':true},"
-			end  
-			table = table .. s    
-		end
-	end
-	table = table .. "}"
-	return table ]]
-	
-	--t[path] = {}
-	
 	local path = BASE_DIR .. relative_path
 	
 	for f in lfs.dir(path) do
@@ -58,13 +45,15 @@ local function scan_dir(relative_path)
 				t["name"] = f
 				t["type"] = "dir"
 				t["size"] = "0kb"
+				t["modify"] = get_modification(p)
 				t["path"] = relative_path  .. f
 				table.insert(file_list_data, t)
-				--scan_dir(p, t[f])
+				--scan_dir(p, t[f]) -- loop scan
 			else
 				t["name"] = f
 				t["type"] = "file"
 				t["size"] = get_size(p) .. "b"
+				t["modify"] = get_modification(p)
 				t["path"] = relative_path .. f
 				table.insert(file_list_data, t)
 			end  
@@ -81,6 +70,11 @@ local function get_server_file_list(relative_path)
 end
 
 
+local function mkdir(dir)
+	lfs.mkdir(BASE_DIR .. dir)
+	ngx.print("ok")
+end
+
 local http_method = ngx.req.get_method()
 
 if http_method == "GET" then
@@ -95,6 +89,11 @@ if http_method == "GET" then
 				if val == "get_server_file_list" then
 					get_server_file_list(args["path"])
 				end
+				
+				if val == "mkdir" then
+					mkdir(args["dir"])
+				end
+				
 			end
 		end
 	end
