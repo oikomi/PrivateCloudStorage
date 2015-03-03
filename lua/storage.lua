@@ -3,8 +3,59 @@ local BASE_DIR = "/home/data"
 
 local lfs = require("lfs")
 local cjson = require("cjson")
+local upload = require "resty.upload"
 
 local file_list_data = {}
+
+function os.capture(cmd, raw)
+	local f = assert(io.popen(cmd, 'r'))
+	local s = assert(f:read('*a'))
+	f:close()
+	if raw then return s end
+	s = string.gsub(s, '^%s+', '')
+	s = string.gsub(s, '%s+$', '')
+	s = string.gsub(s, '[\n\r]+', ' ')
+	return s
+end
+
+local function directory_exists(sPath)
+	if type(sPath) ~= "string" then return false end
+
+	local response = os.execute( "cd " .. sPath )
+	if response == 0 then
+		return true
+	end
+	return false
+end
+
+function os.rmdir(path)
+	ngx.log(ngx.ERR, "os.rmdir: " .. path)
+	if directory_exists(path) then
+		local function _rmdir(path)
+			local iter, dir_obj = lfs.dir(path)
+			while true do
+				local dir = iter(dir_obj)
+				if dir == nil then break end
+				if dir ~= "." and dir ~= ".." then
+					local curDir = path..dir
+					local mode = lfs.attributes(curDir, "mode") 
+					if mode == "directory" then
+						_rmdir(curDir.."/")
+					elseif mode == "file" then
+						os.remove(curDir)
+					end
+				end
+			end
+			local succ, des = os.remove(path)
+			if des then 
+				print(des) 
+			end
+			return succ
+		end
+		_rmdir(path)
+	end
+	return true
+end
 
 local function directory_exists(sPath)
 	if type(sPath) ~= "string" then return false end
@@ -42,7 +93,7 @@ local function findx(str,x)
 end
 
 local function get_name(str)
-	return string.sub(str,findx(str,"/") + 1,-1)
+	return string.sub(str, findx(str,"/") + 1,-1)
 end
 
 local function scan_dir(relative_path)
@@ -108,17 +159,116 @@ end
 
 
 local function mkdir(dir)
-	err = lfs.mkdir(BASE_DIR .. dir)
+	local res_data = {}
+	local err = lfs.mkdir(BASE_DIR .. dir)
 	if err == true then
-		ngx.print("ok")
+		res_data["status"] = 0
+	else
+		res_data["status"] = 1
 	end
-	ngx.print("ok")
 end
 
 local function rm_file(path)
+	local res_data = {}
+	ngx.log(ngx.ERR, BASE_DIR .. path)
+	if is_dir(BASE_DIR .. path) then
+		-- local err, des = os.rmdir(BASE_DIR .. path)
+		local rm_cmd = "rm -f -R " .. BASE_DIR .. path
+		err = os.capture(rm_cmd, false)
+		-- ngx.log(ngx.ERR, err)
+		if err == "" then
+			res_data["status"] = 0
+		else
+			res_data["status"] = 1
+		end
+		ngx.print(cjson.encode(res_data))
+	else
+		local err, des = os.remove(BASE_DIR .. path)
+		if err == true then
+			res_data["status"] = 0
+		else
+			res_data["status"] = 1
+		end
+		ngx.print(cjson.encode(res_data))
+	end
 	
 end
 
+local function rename(old_path, new_path)
+	local res_data = {}
+	local err, des = os.rename(BASE_DIR .. old_path, BASE_DIR .. new_path)
+	if err == true then
+		res_data["status"] = 0
+	else
+		res_data["status"] = 1
+	end
+	ngx.print(cjson.encode(res_data))
+end
+
+
+local function upload_file(relative_path, file_name)
+	local res_data = {}
+	local chunk_size = 4096 -- should be set to 4096 or 8192
+	local file = nil
+	res_data["status"] = 1
+
+	local form, err = upload:new(chunk_size)
+	if not form then
+		ngx.log(ngx.ERR, "failed to new upload: ", err)
+		--res_data["status"] = 1
+		ngx.exit(500)
+	end
+
+	form:set_timeout(1000) -- 1 sec
+
+	local osfilepath = BASE_DIR .. relative_path
+
+	while true do
+		local type, res, err = form:read()
+		if not type then
+			ngx.log(ngx.ERR, "failed to read: " .. err)
+			--res_data["status"] = 1
+			ngx.exit(500)
+		end
+
+		-- ngx.say("read: ", cjson.encode({type, res}))
+
+		if type == "header" then
+			filepath = osfilepath .. file_name
+			file = io.open(filepath, "w+")
+			if not file then
+				ngx.log(ngx.ERR, "failed to open file: " .. filepath)
+				--res_data["status"] = 1
+				ngx.exit(500)
+			end
+		elseif type == "body" then
+			-- ngx.say("body begin")
+			if file then
+				file:write(res)
+				-- ngx.say("write ok: ", res)
+			end
+		elseif type == "part_end" then
+			-- ngx.say("part_end")
+			if file then
+				file:close()
+				file = nil
+				res_data["status"] = 0
+				ngx.print(cjson.encode(res_data))
+				-- ngx.say("file upload success")
+			end
+		elseif type == "eof" then
+			break
+	end
+end
+
+--[[ 	local typ, res, err = form:read()
+	ngx.say("read: ", cjson.encode({typ, res}))
+
+	if i==0 then
+		ngx.say("please upload at least one file!")
+		return
+	end ]]
+end
 
 --main
 
@@ -142,7 +292,11 @@ if http_method == "GET" then
 				end
 				
 				if val == "rm_file" then
-					rm_file()
+					rm_file(args["dir"])
+				end
+				
+				if val == "rename" then
+					rename(args["old_dir"], args["new_dir"])
 				end
 			end
 		end
@@ -152,4 +306,17 @@ end
 
 if http_method == "POST" then
 	ngx.log(ngx.ERR, "a POST req")
+	local args = ngx.req.get_uri_args()
+	for key, val in pairs(args) do
+		if type(val) == "table" then
+			ngx.log(ngx.ERR, "not support")
+			ngx.exit(403)
+		else
+			if key == "action" then
+				if val == "upload" then
+					upload_file(args["path"], args["file_name"])
+				end
+			end
+		end
+	end
 end
