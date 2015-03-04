@@ -196,7 +196,7 @@ end
 
 local function rename(old_path, new_path)
 	local res_data = {}
-	local err, des = os.rename(BASE_DIR .. old_path, BASE_DIR .. new_path)
+	local err, des = os.rename(BASE_DIR .. old_path, BASE_DIR .. "/" .. new_path)
 	if err == true then
 		res_data["status"] = 0
 	else
@@ -206,7 +206,7 @@ local function rename(old_path, new_path)
 end
 
 
-local function upload_file(relative_path, file_name)
+local function upload_file(relative_path)
 	local res_data = {}
 	local chunk_size = 4096 -- should be set to 4096 or 8192
 	local file = nil
@@ -221,7 +221,7 @@ local function upload_file(relative_path, file_name)
 
 	form:set_timeout(1000) -- 1 sec
 
-	local osfilepath = BASE_DIR .. relative_path
+	local osfilepath = BASE_DIR .. "/" .. relative_path
 
 	while true do
 		local type, res, err = form:read()
@@ -234,7 +234,7 @@ local function upload_file(relative_path, file_name)
 		-- ngx.say("read: ", cjson.encode({type, res}))
 
 		if type == "header" then
-			filepath = osfilepath .. file_name
+			local filepath = osfilepath
 			file = io.open(filepath, "w+")
 			if not file then
 				ngx.log(ngx.ERR, "failed to open file: " .. filepath)
@@ -314,7 +314,8 @@ if http_method == "POST" then
 		else
 			if key == "action" then
 				if val == "upload" then
-					upload_file(args["path"], args["file_name"])
+					ngx.log(ngx.ERR, args["path"])
+					upload_file(args["path"])
 				end
 			end
 		end
