@@ -1,4 +1,7 @@
 
+
+local INFO_STORE_BASE_DIR = "/etc/"
+
 local BASE_DIR = "/home/data"
 
 local lfs = require("lfs")
@@ -166,7 +169,6 @@ local function scan_dir(relative_path)
 				t["path"] = relative_path .. f
 				table.insert(file_list_data, t)
 			end  
-			
 		end
 	end
 end
@@ -188,6 +190,8 @@ local function mkdir(dir)
 		res_data["status"] = 1
 		ngx.log(ngx.ERR, "failed to mkdir: ", des)
 	end
+	
+	ngx.print(cjson.encode(res_data))
 end
 
 local function rm_file(path)
@@ -291,12 +295,72 @@ local function upload_file(relative_path)
 end
 
 --[[ 	local typ, res, err = form:read()
-	ngx.say("read: ", cjson.encode({typ, res}))
+	
 
 	if i==0 then
 		ngx.say("please upload at least one file!")
 		return
 	end ]]
+end
+
+local function read_info()
+	local file = io.open(INFO_STORE_BASE_DIR .. "info.user", "r")  
+	assert(file)  
+	local data = file:read("*a")
+	file:close() 
+	
+	return data
+end
+
+local function save_info(data)  
+	local file = io.open(INFO_STORE_BASE_DIR .. "info.user", "w") 
+	assert(file) 
+	file:write(data) 
+	file:close() 
+end  
+
+
+local function login()
+	local res_data = {}
+	res_data["status"] = 1
+	local user_name
+	local password
+	ngx.req.read_body()
+	local args, err = ngx.req.get_post_args()
+	if not args then
+		ngx.log(ngx.ERR, "failed to get post args: " .. err)
+		return
+	end
+	for key, val in pairs(args) do
+		if type(val) == "table" then
+			ngx.log(ngx.ERR, "not support")
+			ngx.exit(403)
+		else
+			if key == "user_name" then
+				user_name = val
+			end
+			
+			if key == "password" then
+				password = val
+			end
+		end
+	end
+	
+	ngx.log(ngx.ERR, user_name .. password)
+	
+	local store_info = read_info()
+
+	if store_info then
+		local store_info_t = cjson.decode(store_info)
+		
+		if store_info_t["user_name"] == user_name and store_info_t["password"] == password then
+			res_data["status"] = 0
+			ngx.print(cjson.encode(res_data))
+		else
+			ngx.print(cjson.encode(res_data))
+		end
+	end
+
 end
 
 --main
@@ -342,6 +406,10 @@ if http_method == "POST" then
 			ngx.exit(403)
 		else
 			if key == "action" then
+				if val == "login" then
+					login()
+				end
+
 				if val == "upload" then
 					ngx.log(ngx.ERR, args["path"])
 					upload_file(args["path"])
