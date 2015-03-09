@@ -7,6 +7,27 @@ local upload = require "resty.upload"
 
 local file_list_data = {}
 
+local function lua_string_split(str, split_char)
+	local sub_str_tab = {}
+	local i = 0
+	local j = 0
+	while true do
+		j = string.find(str, split_char,i+1)
+		if j == nil then
+			table.insert(sub_str_tab,string.sub(str,i+1,#str))
+			break
+		end
+		if i+1 <= j-1 then
+			table.insert(sub_str_tab,string.sub(str,i+1,j-1))
+		end
+		i = j
+		if i == #str then
+			break
+		end
+	end
+	return sub_str_tab
+end
+
 function os.capture(cmd, raw)
 	local f = assert(io.popen(cmd, 'r'))
 	local s = assert(f:read('*a'))
@@ -116,7 +137,7 @@ local function scan_dir(relative_path)
 					t["modify"] = modify_val.modification
 				end
 				
-				t["path"] = relative_path  .. f
+				t["path"] = relative_path  .. f .. "/"
 				table.insert(file_list_data, t)
 				--scan_dir(p, t[f]) -- loop scan
 			else
@@ -152,7 +173,7 @@ end
 
 
 local function get_server_file_list(relative_path)
-	scan_dir(relative_path)
+	scan_dir(ngx.unescape_uri(relative_path))
 	ngx.log(ngx.ERR, cjson.encode(file_list_data))
 	ngx.print(cjson.encode(file_list_data))
 end
@@ -160,34 +181,37 @@ end
 
 local function mkdir(dir)
 	local res_data = {}
-	local err = lfs.mkdir(BASE_DIR .. dir)
+	local err, des = lfs.mkdir(BASE_DIR .. ngx.unescape_uri(dir))
 	if err == true then
 		res_data["status"] = 0
 	else
 		res_data["status"] = 1
+		ngx.log(ngx.ERR, "failed to mkdir: ", des)
 	end
 end
 
 local function rm_file(path)
 	local res_data = {}
-	ngx.log(ngx.ERR, BASE_DIR .. path)
-	if is_dir(BASE_DIR .. path) then
+	ngx.log(ngx.ERR, BASE_DIR .. ngx.unescape_uri(path))
+	if is_dir(BASE_DIR .. ngx.unescape_uri(path)) then
 		-- local err, des = os.rmdir(BASE_DIR .. path)
-		local rm_cmd = "rm -f -R " .. BASE_DIR .. path
+		local rm_cmd = "rm -f -R " .. BASE_DIR .. ngx.unescape_uri(path)
 		err = os.capture(rm_cmd, false)
 		-- ngx.log(ngx.ERR, err)
 		if err == "" then
 			res_data["status"] = 0
 		else
 			res_data["status"] = 1
+			ngx.log(ngx.ERR, "failed to rm")
 		end
 		ngx.print(cjson.encode(res_data))
 	else
-		local err, des = os.remove(BASE_DIR .. path)
+		local err, des = os.remove(BASE_DIR .. ngx.unescape_uri(path))
 		if err == true then
 			res_data["status"] = 0
 		else
 			res_data["status"] = 1
+			ngx.log(ngx.ERR, "failed to rm: ", des)
 		end
 		ngx.print(cjson.encode(res_data))
 	end
@@ -196,11 +220,12 @@ end
 
 local function rename(old_path, new_path)
 	local res_data = {}
-	local err, des = os.rename(BASE_DIR .. old_path, BASE_DIR .. "/" .. new_path)
+	local err, des = os.rename(BASE_DIR .. ngx.unescape_uri(old_path), BASE_DIR .. "/" .. ngx.unescape_uri(new_path))
 	if err == true then
 		res_data["status"] = 0
 	else
 		res_data["status"] = 1
+		ngx.log(ngx.ERR, "failed to rename: ", des)
 	end
 	ngx.print(cjson.encode(res_data))
 end
@@ -220,8 +245,12 @@ local function upload_file(relative_path)
 	end
 
 	form:set_timeout(1000) -- 1 sec
+	
+	--local tmp_t = lua_string_split(relative_path, "/")
+	
+	--local file_name = tmp_str[table.getn(tmp_t)]
 
-	local osfilepath = BASE_DIR .. "/" .. relative_path
+	local osfilepath = BASE_DIR .. "/" .. ngx.unescape_uri(relative_path)
 
 	while true do
 		local type, res, err = form:read()
