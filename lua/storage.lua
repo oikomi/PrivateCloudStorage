@@ -4,6 +4,8 @@ local INFO_STORE_BASE_DIR = "/etc/"
 
 local BASE_DIR = "/home/data"
 
+local SALT = "aDio#$!n999"
+
 local lfs = require("lfs")
 local cjson = require("cjson")
 local upload = require "resty.upload"
@@ -323,6 +325,7 @@ end
 local function login()
 	local res_data = {}
 	res_data["status"] = 1
+	res_data["token"] = "null"
 	local user_name
 	local password
 	ngx.req.read_body()
@@ -355,6 +358,7 @@ local function login()
 		
 		if store_info_t["user_name"] == user_name and store_info_t["password"] == password then
 			res_data["status"] = 0
+			res_data["token"] = ngx.md5(user_name .. password .. SALT)
 			ngx.print(cjson.encode(res_data))
 		else
 			ngx.print(cjson.encode(res_data))
