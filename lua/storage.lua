@@ -367,6 +367,25 @@ local function login()
 
 end
 
+
+local function get_storage_info()
+	local res_data = {}
+	res_data["status"] = 1
+	res_data["used"] = "null"
+	local info_cmd = "du -hs -m " .. BASE_DIR .. "  | awk '{print $1}'"
+	res = os.capture(info_cmd, false)
+	ngx.log(ngx.ERR, res)
+	if res == "" then
+		res_data["status"] = 1
+		ngx.log(ngx.ERR, "failed to get_storage_info")
+		ngx.print(cjson.encode(res_data))
+	else
+		res_data["status"] = 0
+		res_data["used"] = res
+		ngx.print(cjson.encode(res_data))
+	end
+end
+
 --main
 
 local http_method = ngx.req.get_method()
@@ -394,6 +413,10 @@ if http_method == "GET" then
 				
 				if val == "rename" then
 					rename(args["old_dir"], args["new_dir"])
+				end
+				
+				if val == "get_storage_info" then
+					get_storage_info()
 				end
 			end
 		end
