@@ -132,7 +132,7 @@ local function scan_dir(relative_path)
 			if is_dir(p) then
 				t["name"] = f
 				t["type"] = "dir"
-				t["size"] = "0kb"
+				t["size"] = 0
 				local modify_val = get_modification(p)
 				if modify_val == nil then
 					t["status"] = 1
@@ -155,7 +155,7 @@ local function scan_dir(relative_path)
 					t["size"] = "null"
 				else
 					t["status"] = 0
-					t["size"] = size_val.size .. "b"
+					t["size"] = size_val.size
 				end
 
 				local file_modify_val = get_modification(p)
