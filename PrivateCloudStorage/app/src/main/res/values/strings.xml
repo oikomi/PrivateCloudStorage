@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">个云</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-	
-    <string name="cancel_btn">Cancel</string>
-    <string name="iconDes_testview">Icon</string>
-</resources>
