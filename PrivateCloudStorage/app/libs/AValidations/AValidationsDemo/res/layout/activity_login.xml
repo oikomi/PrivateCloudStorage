@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.saicmotor.telematicsas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activity_bg"
+    android:orientation="vertical" >
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginTop="@dimen/login_layout_margin"
+        android:background="@color/line_bg" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_height"
+        android:background="@drawable/layout_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/login_layout_padding"
+        android:paddingRight="@dimen/login_layout_padding" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/login_user_icon" />
+
+        <View
+            android:layout_width="@dimen/line_height"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/login_line_padding_vertical"
+            android:layout_marginLeft="@dimen/login_line_padding_horizontal"
+            android:layout_marginRight="@dimen/login_line_padding_horizontal"
+            android:layout_marginTop="@dimen/login_line_padding_vertical"
+            android:background="@color/line_bg" />
+
+        <EditText
+            android:id="@+id/login_username_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/translucence"
+            android:digits="@string/edit_text_type"
+            android:hint="@string/login_username_hint"
+            android:maxLength="@string/max_length_username"
+            android:singleLine="true"
+            android:text="shangpuyun123"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/line_bg" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_height"
+        android:background="@drawable/layout_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/login_layout_padding"
+        android:paddingRight="@dimen/login_layout_padding" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/login_password_icon" />
+
+        <View
+            android:layout_width="@dimen/line_height"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/login_line_padding_vertical"
+            android:layout_marginLeft="@dimen/login_line_padding_horizontal"
+            android:layout_marginRight="@dimen/login_line_padding_horizontal"
+            android:layout_marginTop="@dimen/login_line_padding_vertical"
+            android:background="@color/line_bg" />
+
+        <EditText
+            android:id="@+id/login_password_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/translucence"
+            android:digits="@string/edit_text_type"
+            android:hint="@string/login_password_hint"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            android:maxLength="@string/max_length_password"
+            android:text="Pass1234"
+            android:textColor="@color/text_color" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/line_bg" />
+
+    <Button
+        android:id="@+id/login_button"
+        style="@style/RedButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_height"
+        android:layout_marginLeft="@dimen/login_layout_padding"
+        android:layout_marginRight="@dimen/login_layout_padding"
+        android:layout_marginTop="@dimen/login_button_padding"
+        android:text="@string/login_title" />
+
+
+</LinearLayout>

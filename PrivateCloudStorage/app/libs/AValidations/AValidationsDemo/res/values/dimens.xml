@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- 常规 -->
+    <dimen name="layout_height">48dp</dimen>
+    <dimen name="top_title_textsize">18sp</dimen>
+    <!-- 标题栏文字大小 -->
+    <dimen name="title_textsize">16dp</dimen>
+    <!-- 标题文字大小 -->
+    <dimen name="normal_textsize">14dp</dimen>
+    <!-- 常规文字大小 -->
+    <dimen name="button_textsize">16dp</dimen>
+    <!-- 按钮文字大小 -->
+    <dimen name="line_height">1px</dimen>
+    <!-- 分割线 -->
+    <dimen name="layout_padding">20dp</dimen>
+    <dimen name="textview_padding">15dp</dimen>
+    <dimen name="layout_margin">15dp</dimen>
+
+    <!-- drawable -->
+    <dimen name="red_button_padding">20dp</dimen>
+    <dimen name="red_button_stroke">1px</dimen>
+    <dimen name="red_button_radius">32dp</dimen>
+    <dimen name="login_reg_button_vertical">8dp</dimen>
+    <dimen name="login_reg_button_horizontal">16dp</dimen>
+    <dimen name="login_reg_button_radius">8dp</dimen>
+    <dimen name="login_reg_button_stroke">1px</dimen>
+
+
+    <!-- LoginActivity -->
+    <dimen name="login_layout_margin">15dp</dimen>
+    <dimen name="login_layout_padding">20dp</dimen>
+    <dimen name="login_button_padding">30dp</dimen>
+    <dimen name="login_line_padding_vertical">5dp</dimen>
+    <dimen name="login_line_padding_horizontal">15dp</dimen>
+
+
+</resources>

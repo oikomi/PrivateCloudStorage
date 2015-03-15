@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- 通用颜色 -->
+    <color name="black">#000000</color> <!-- 黑色 -->
+    <color name="white">#ffffff</color> <!-- 白色 -->
+    <color name="gray">#a8a8a8</color> <!-- 灰色 -->
+    <color name="translucence">#00000000</color> <!-- 全透明（无颜色） -->
+     
+    <!-- 项目相关颜色 -->
+    <color name="activity_bg">#EAEAEA</color> <!-- 页面背景 -->
+    <color name="show_room_bg">#F3F3F3</color> 
+    <color name="title_bg">#d2232a</color> <!-- 标题文字背景 -->
+    <color name="line_bg">#cccccc</color> <!-- 分割线 -->
+    <color name="text_color">#666666</color><!-- 文字颜色 -->
+    <color name="gray_text_color_normal">#999999</color>
+    <color name="gray_text_color_selected">#3f3f3f</color>
+    <color name="layout_select_bg">#dde9f9</color>
+    <color name="layout_value_color">#b5b5b5</color>
+    <color name="color_black_text">#333333</color>
+    <color name="red_button_normal">#d2232a</color>
+    <color name="red_button_selected">#db4f55</color>
+    <color name="red_button_disable">#b5b5b5</color>
+    <color name="red_button_stroke">#a4071c</color>
+    <color name="color_blue_text">#006ce5</color> 
+    <color name="color_solid_active">#dde9f9</color> 
+    
+    
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal"
+    >
+
+    <!--<com.beardedhen.androidbootstrap.BootstrapButton-->
+        <!--android:id="@+id/btn_mkdir"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="48dp"-->
+        <!--android:background="@drawable/button"-->
+        <!--android:paddingRight="1dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:drawableLeft="@drawable/adddir"-->
+        <!--android:text="新建文件夹"/>-->
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/btn_mkdir"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        bootstrap:bb_icon_left="fa-folder"
+        bootstrap:bb_type="primary"
+        android:text="新建文件夹"/>
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/btn_upload"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        bootstrap:bb_icon_left="fa-cloud-upload"
+        bootstrap:bb_type="primary"
+        android:text="上传云盘"
+        />
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/btn_transfer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/list"
+        android:layout_weight="1"
+        bootstrap:bb_icon_left="fa-list-ul"
+        bootstrap:bb_type="primary"
+        android:text="传输列表"
+        />
+</LinearLayout>

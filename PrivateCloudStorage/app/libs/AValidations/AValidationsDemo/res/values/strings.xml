@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 所有错误提示，都是以e_开头_hint结尾 -->
+    <string name="e_username_hint">请输入正确的用户名</string>
+    <string name="e_password_hint">请输入正确的密码</string>
+
+    <!-- EditText Max Length -->
+    <string name="max_length_username">12</string>
+    <string name="max_length_password">12</string>
+
+    <!-- 常规 -->
+    <string name="edit_text_type">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="app_name">AValidationsDemo</string>
+    <string name="submit">Submit</string>
+
+    <!-- LoginActivity -->
+    <string name="login_title">Login</string>
+    <string name="login_username_hint">Enter Username</string>
+    <string name="login_password_hint">Enter Password</string>
+    <string name="login_username_length_hint">Username length between 8 to 12</string>
+    <string name="login_password_length_hint">Password length between 8 to 12</string>
+
+</resources>

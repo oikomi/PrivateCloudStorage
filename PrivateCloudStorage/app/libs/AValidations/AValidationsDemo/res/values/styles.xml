@@ -1,0 +1,21 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppBaseTheme" parent="android:Theme.Light"></style>
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    
+    <!-- 红色按钮 -->
+    <style name="RedButton">
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/button_red_selector</item>
+        <item name="android:textSize">@dimen/button_textsize</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:enabled">false</item>
+    </style>
+
+    
+</resources>
