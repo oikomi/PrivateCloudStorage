@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +46,6 @@ public class DownloadListFragment extends Fragment {
     {
         settings.data.add(new Progress(fileName));
     }
-
-
 
     public class MyAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -112,7 +109,6 @@ public class DownloadListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i("DownloadListActivity", "onDestroy");
     }
 
     private void registerReceiver() {
@@ -123,7 +119,6 @@ public class DownloadListFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
                 mDownloadingProgressReceiver, intentToReceiveFilter);
         mReceiversRegistered = true;
-        Log.i("DownloadListActivity", "registerReceiver");
     }
 
     private void unregisterReceiver() {
@@ -131,7 +126,6 @@ public class DownloadListFragment extends Fragment {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
                     mDownloadingProgressReceiver);
             mReceiversRegistered = false;
-            Log.i("DownloadListActivity", "unregisterReceiver");
         }
     }
 

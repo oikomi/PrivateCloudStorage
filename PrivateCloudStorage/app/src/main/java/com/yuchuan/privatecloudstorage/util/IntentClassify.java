@@ -28,7 +28,7 @@ public class IntentClassify {
 
     //android获取一个用于打开图片文件的intent
 
-    public static Intent getImageFileIntent( String url )
+    public static Intent getImageFileIntent(String path)
     {
         Intent intent = new Intent("android.intent.action.VIEW");
 
@@ -36,7 +36,8 @@ public class IntentClassify {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Uri uri = Uri.parse(Config.PLAY_URL + url);
+        //Uri uri = Uri.parse(Config.PLAY_URL + url);
+        Uri uri = Uri.fromFile(new File(path));
 
         intent.setDataAndType(uri, "image/*");
 
@@ -65,12 +66,18 @@ public class IntentClassify {
         Intent intent = new Intent("android.intent.action.VIEW");
         intent.addCategory("android.intent.category.DEFAULT");
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (paramBoolean) {
-            Uri uri1 = Uri.parse(Config.PLAY_URL + url);
+        if (paramBoolean){
+
+            Uri uri1 = Uri.parse(url );
+
             intent.setDataAndType(uri1, "text/plain");
-        } else {
-            Uri uri2 = Uri.parse(Config.PLAY_URL + url);
+
+        }else{
+
+            Uri uri2 = Uri.fromFile(new File(url ));
+
             intent.setDataAndType(uri2, "text/plain");
+
         }
         return intent;
     }

@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <include layout="@layout/top1_back" />
-    <include layout="@layout/top2" />
+    <include layout="@layout/top2_no_backup" />
 
     <!--<TextView-->
         <!--android:id="@+id/tv_root_path"-->
@@ -15,13 +15,20 @@
         <!--android:background="#9ACD32"-->
         <!--android:gravity="center"-->
         <!--android:textSize="22sp"/>-->
-
+    <com.baoyz.widget.PullRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
     <ListView
         android:id="@+id/lv_file_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
         ></ListView>
+
+    </com.baoyz.widget.PullRefreshLayout>
 
     <include layout="@layout/top3" />
 

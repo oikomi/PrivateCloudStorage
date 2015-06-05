@@ -5,8 +5,10 @@ package com.yuchuan.privatecloudstorage.config;
  */
 public class Config {
 
-    public static final String URL = "http://192.168.31.244:10000/api/v1/storage";
-    public static final String PLAY_URL = "http://192.168.31.244:10000/open";
+    public static final String URL = "http://54.187.96.250:10000/api/v1/storage";
+    public static final String PLAY_URL = "http://54.187.96.250:10000/open";
+    //public static final String URL = "http://192.168.31.245:10000/api/v1/storage";
+    //public static final String PLAY_URL = "http://192.168.31.245:10000/open";
     public static final String CHARSET = "utf-8";
     public static final String KEY_STATUS = "status";
     public static final String KEY_ACTION = "action";
@@ -22,10 +24,12 @@ public class Config {
     public static final String ACTION_RMDIR = "rm_file";
     public static final String ACTION_RENAME = "rename";
     public static final String ACTION_GET_STORAGE_INFO = "get_storage_info";
+    public static final String ACTION_IS_FILE_EXIST = "is_file_exist";
 
+
+
+    public static final String STORE_BASE_PATH = "/storage/emulated/0/GeYunDownload";
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
     public static final int STATUS_INVALID_TOKEN = 2;
-
-
 }

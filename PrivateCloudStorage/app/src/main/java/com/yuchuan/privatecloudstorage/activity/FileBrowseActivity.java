@@ -24,7 +24,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
@@ -78,6 +80,8 @@ public class FileBrowseActivity extends Activity {
     private HttpHandler<File> cacheFilehandler;
     private BroadcastReceiver mCacheFileReceiver;
     private boolean mCacheFileReceiverRegistered;
+
+    PullRefreshLayout xiahua;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +146,8 @@ public class FileBrowseActivity extends Activity {
         transfer = (BootstrapButton) findViewById(R.id.btn_transfer);
         back = (Button) findViewById(R.id.btn_back);
         tvRootPathInfo = (TextView) findViewById(R.id.tv_root_path_info);
+
+        xiahua = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
     }
 
     @Override
@@ -170,7 +176,9 @@ public class FileBrowseActivity extends Activity {
                                             }, new RmFile.FailCallback() {
                                                 @Override
                                                 public void onFail() {
-                                                    Log.i("FileBrowseActivity", "onFail");
+                                                    Toast.makeText(FileBrowseActivity.this,
+                                                            "删除 ： " + f.get("FilePath").toString() + " 失败",
+                                                            Toast.LENGTH_LONG).show();
                                                 }
                                             });
                                         } catch (UnsupportedEncodingException e) {
@@ -220,11 +228,17 @@ public class FileBrowseActivity extends Activity {
                 break;
 
             case 1:
-                RenameDialog dialog = new RenameDialog(FileBrowseActivity.this,
-                        new RenameDialog.LeaveMyDialogListener() {
-                            @Override
-                            public void onClick(View view, String newName) {
-                                HashMap<String, Object> f2 = (HashMap<String, Object>) fileList.getAdapter().getItem(selectPos);
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.comm_rename_dialog,
+                        (ViewGroup) findViewById(R.id.comm_rename_dialog));
+                final BootstrapEditText et_rename = (BootstrapEditText)layout.findViewById(R.id.et_rename_name);
+                final HashMap<String, Object> f2 = (HashMap<String, Object>) fileList.getAdapter().getItem(selectPos);
+                String oldName = f2.get("FileName").toString();
+                et_rename.setText(oldName);
+                new AlertDialog.Builder(FileBrowseActivity.this).setTitle("重命名").setView(layout)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String newName = et_rename.getText().toString();
                                 try {
                                     new Rename("/" + URLEncoder.encode(f2.get("FilePath").toString(), "UTF-8"),
                                             URLEncoder.encode(rootPath + "/" + newName, "UTF-8"), "kkk", new Rename.SuccessCallback() {
@@ -232,22 +246,57 @@ public class FileBrowseActivity extends Activity {
                                         public void onSuccess(String result) {
                                             Log.i("MainActivity", "onSuccess");
 
-                                            getServerFileList(rootPath);
+                                            try {
+                                                getServerFileList(URLEncoder.encode(rootPath, "UTF-8"));
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                     }, new Rename.FailCallback() {
 
                                         @Override
                                         public void onFail() {
-                                            Log.i("MainActivity", "onFail");
+                                            Toast.makeText(FileBrowseActivity.this,
+                                                "重命名 ： " + f2.get("FilePath").toString() + " 失败",
+                                                Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
+
                             }
-                        });
-                dialog.setCancelable(false);
-                dialog.show();
+                        }).
+                        setNegativeButton("取消", null)
+                        .show();
+//                RenameDialog dialog = new RenameDialog(FileBrowseActivity.this,
+//                        new RenameDialog.LeaveMyDialogListener() {
+//                            @Override
+//                            public void onClick(View view, String newName) {
+//                                HashMap<String, Object> f2 = (HashMap<String, Object>) fileList.getAdapter().getItem(selectPos);
+//                                try {
+//                                    new Rename("/" + URLEncoder.encode(f2.get("FilePath").toString(), "UTF-8"),
+//                                            URLEncoder.encode(rootPath + "/" + newName, "UTF-8"), "kkk", new Rename.SuccessCallback() {
+//                                        @Override
+//                                        public void onSuccess(String result) {
+//                                            Log.i("MainActivity", "onSuccess");
+//
+//                                            getServerFileList(rootPath);
+//                                        }
+//                                    }, new Rename.FailCallback() {
+//
+//                                        @Override
+//                                        public void onFail() {
+//                                            Log.i("MainActivity", "onFail");
+//                                        }
+//                                    });
+//                                } catch (UnsupportedEncodingException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//                dialog.setCancelable(false);
+//                dialog.show();
 
                 break;
             case 2:
@@ -256,7 +305,7 @@ public class FileBrowseActivity extends Activity {
 
                 if (settings.downFlag.containsKey(downUrl) == false) {
                     settings.downFlag.put(downUrl, true);
-                    downloadFile(downUrl, "/storage/emulated/0/Download" + f3.get("FilePath").toString());
+                    downloadFile(downUrl, Config.STORE_BASE_PATH + f3.get("FilePath").toString());
                 } else {
                     Toast.makeText(FileBrowseActivity.this,
                             "已经在下载中。。。",
@@ -398,7 +447,7 @@ public class FileBrowseActivity extends Activity {
         }
     }
 
-    private void cacheFile(final String url, final String storePath) {
+    private void cacheFile(final String url, final String storePath, final String fileType) {
         HttpUtils http = new HttpUtils();
         final LocalBroadcastManager mCacheFileFinish = LocalBroadcastManager.getInstance(this);
         final LocalBroadcastManager mCacheFileProgress = LocalBroadcastManager.getInstance(this);
@@ -420,7 +469,18 @@ public class FileBrowseActivity extends Activity {
             @Override
             public void onSuccess(ResponseInfo<File> fileResponseInfo) {
                 Toast.makeText(FileBrowseActivity.this, "打开文件: " + "成功", Toast.LENGTH_LONG).show();
-                Intent intent = IntentClassify.getPdfFileIntent(storePath);
+                Intent intent = new Intent();
+                switch (fileType) {
+                    case "pdf":
+                        intent = IntentClassify.getPdfFileIntent(storePath);
+                        break;
+                    case "txt":
+                        intent = IntentClassify.getTextFileIntent(storePath, false);
+                        break;
+                    case "pic":
+                        intent = IntentClassify.getImageFileIntent(storePath);
+                        break;
+                }
                 startActivity(intent);
 
                 Intent i = new Intent();
@@ -468,7 +528,7 @@ public class FileBrowseActivity extends Activity {
     }
 
 
-    private void openFile(String path, final int position) {
+    private void openFile(String path, final int position, final String fileType) {
         final OpenFileDialog dialog = new OpenFileDialog(FileBrowseActivity.this,
                 new OpenFileDialog.LeaveMyDialogListener() {
                     @Override
@@ -477,7 +537,7 @@ public class FileBrowseActivity extends Activity {
                         HashMap<String, Object> f = (HashMap<String, Object>) fileList.getAdapter().getItem(position);
                         String downUrl = Config.PLAY_URL + f.get("FilePath").toString();
                         Log.i("MainActivity", downUrl);
-                        cacheFile(downUrl, "/storage/emulated/0/Download" + f.get("FilePath").toString());
+                        cacheFile(downUrl, Config.STORE_BASE_PATH + f.get("FilePath").toString(), fileType);
                     }
                 });
         dialog.setCancelable(false);
@@ -485,6 +545,17 @@ public class FileBrowseActivity extends Activity {
     }
 
     private void initEvent() {
+        xiahua.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    getServerFileList(URLEncoder.encode(rootPath, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -509,22 +580,24 @@ public class FileBrowseActivity extends Activity {
                     startActivity(intent);
                 } else {
                     String postfix = Util.getFilePostfix(name);
-                    if (postfix.equals("mp4")) {
+                    if (postfix.equalsIgnoreCase("mp4")) {
                         Intent intent = IntentClassify.getVideoFileIntent(path_encoder);
                         startActivity(intent);
                     }
-                    if (postfix.equals("pdf")) {
+                    if (postfix.equalsIgnoreCase("pdf")) {
 //                        Intent intent = IntentClassify.getPdfFileIntent(path_encoder);
 //                        startActivity(intent);
-                        openFile(path, position);
+                        openFile(path, position, "pdf");
                     }
-                    if (postfix.equals("png") || postfix.equals("jpg")) {
-                        Intent intent = IntentClassify.getImageFileIntent(path_encoder);
-                        startActivity(intent);
+                    if (postfix.equalsIgnoreCase("png") || postfix.equalsIgnoreCase("jpg")) {
+//                        Intent intent = IntentClassify.getImageFileIntent(path_encoder);
+//                        startActivity(intent);
+                        openFile(path, position, "pic");
                     }
-                    if (postfix.equals("txt")) {
-                        Intent intent = IntentClassify.getTextFileIntent(path_encoder, true);
-                        startActivity(intent);
+                    if (postfix.equalsIgnoreCase("txt")) {
+//                        Intent intent = IntentClassify.getTextFileIntent(path_encoder, true);
+//                        startActivity(intent);
+                        openFile(path, position, "txt");
                     }
                 }
             }
@@ -563,42 +636,80 @@ public class FileBrowseActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                MkdirDialog dialog = new MkdirDialog(FileBrowseActivity.this,
-                        new MkdirDialog.LeaveMyDialogListener() {
-                            @Override
-                            public void onClick(View view, String dirD) {
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.comm_mkdir_dialog,
+                        (ViewGroup) findViewById(R.id.comm_mkdir_dialog));
+                final BootstrapEditText et_mkdir = (BootstrapEditText)layout.findViewById(R.id.et_dir_name);
+                new AlertDialog.Builder(FileBrowseActivity.this).setTitle("新建文件夹").setView(layout)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String name = et_mkdir.getText().toString();
                                 try {
-                                    tmp = URLEncoder.encode(dirD, "UTF-8");
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    new Mkdir(URLEncoder.encode(rootPath + "/" + tmp, "UTF-8"), "kkk", new Mkdir.SuccessCallback() {
+                                    new Mkdir(URLEncoder.encode(rootPath + "/" + name, "UTF-8"), "kkk", new Mkdir.SuccessCallback() {
 
                                         @Override
                                         public void onSuccess(String result) {
-                                            Log.i("FileBrowseActivity", "onSuccess");
-                                            //Toast.makeText(FileBrowseActivity.this, "创建文件夹: " + tmp + ", 请回退刷新查看", Toast.LENGTH_LONG).show();
+                                            Log.i("MainActivity", "onSuccess");
+
+                                            //Toast.makeText(MainActivity.this, "创建文件夹: " + tmp + ", 请回退刷新查看", Toast.LENGTH_LONG).show();
                                             try {
                                                 getServerFileList(URLEncoder.encode(rootPath, "UTF-8"));
                                             } catch (UnsupportedEncodingException e) {
                                                 e.printStackTrace();
                                             }
+
                                         }
                                     }, new Mkdir.FailCallback() {
 
                                         @Override
                                         public void onFail() {
-                                            Log.i("FileBrowseActivity", "onFail");
+                                            Log.i("MainActivity", "onFail");
                                         }
                                     });
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
+
                             }
-                        });
-                dialog.setCancelable(false);
-                dialog.show();
+                        }).
+                        setNegativeButton("取消", null)
+                        .show();
+//                MkdirDialog dialog = new MkdirDialog(FileBrowseActivity.this,
+//                        new MkdirDialog.LeaveMyDialogListener() {
+//                            @Override
+//                            public void onClick(View view, String dirD) {
+//                                try {
+//                                    tmp = URLEncoder.encode(dirD, "UTF-8");
+//                                } catch (UnsupportedEncodingException e) {
+//                                    e.printStackTrace();
+//                                }
+//                                try {
+//                                    new Mkdir(URLEncoder.encode(rootPath + "/" + tmp, "UTF-8"), "kkk", new Mkdir.SuccessCallback() {
+//
+//                                        @Override
+//                                        public void onSuccess(String result) {
+//                                            Log.i("FileBrowseActivity", "onSuccess");
+//                                            //Toast.makeText(FileBrowseActivity.this, "创建文件夹: " + tmp + ", 请回退刷新查看", Toast.LENGTH_LONG).show();
+//                                            try {
+//                                                getServerFileList(URLEncoder.encode(rootPath, "UTF-8"));
+//                                            } catch (UnsupportedEncodingException e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                        }
+//                                    }, new Mkdir.FailCallback() {
+//
+//                                        @Override
+//                                        public void onFail() {
+//                                            Log.i("FileBrowseActivity", "onFail");
+//                                        }
+//                                    });
+//                                } catch (UnsupportedEncodingException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//                dialog.setCancelable(false);
+//                dialog.show();
             }
         });
 
@@ -715,13 +826,19 @@ public class FileBrowseActivity extends Activity {
                         fileList.setAdapter(mAdapter);
                         //mAdapter.notifyDataSetChanged();
                     }
+
+                    xiahua.setRefreshing(false);
                 }
             }, new GetServerFileList.FailCallback() {
 
                 @Override
                 public void onFail() {
                     Log.i("MainActivity", "onFail");
+                    Toast.makeText(FileBrowseActivity.this,"连接服务器失败，请检查你的网络", Toast.LENGTH_LONG).show();
+                    xiahua.setRefreshing(false);
                 }
+
+
             });
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -842,21 +959,21 @@ public class FileBrowseActivity extends Activity {
 
             if (type.equals("dir")) {
                 if (holder.img != null) {
-                    holder.fileSize.setText("");
+                    holder.fileSize.setText(Util.timeStamp2Date(getDate().get(position).get("ModifyData").toString(), "yyyy-MM-dd HH:mm:ss"));
                     holder.img.setImageResource(R.drawable.folder);
                 }
             } else {
                 String postfix = Util.getFilePostfix(getDate().get(position).get("FileName").toString());
-                if (postfix.equals("mp4") || postfix.equals("avi") || postfix.equals("ts")
-                        || postfix.equals("mpg") || postfix.equals("mpeg") || postfix.equals("rmvb")) {
+                if (postfix.equalsIgnoreCase("mp4") || postfix.equalsIgnoreCase("avi") || postfix.equalsIgnoreCase("ts")
+                        || postfix.equalsIgnoreCase("mpg") || postfix.equalsIgnoreCase("mpeg") || postfix.equalsIgnoreCase("rmvb")) {
                     holder.img.setImageResource(R.drawable.video);
-                } else if (postfix.equals("pdf")) {
+                } else if (postfix.equalsIgnoreCase("pdf")) {
                     holder.img.setImageResource(R.drawable.pdf);
-                } else if (postfix.equals("txt")) {
+                } else if (postfix.equalsIgnoreCase("txt")) {
                     holder.img.setImageResource(R.drawable.txt);
-                } else if (postfix.equals("zip") || postfix.equals("gz")) {
+                } else if (postfix.equalsIgnoreCase("zip") || postfix.equalsIgnoreCase("gz")) {
                     holder.img.setImageResource(R.drawable.yasuo);
-                }  else if (postfix.equals("png") || postfix.equals("jpg")) {
+                }  else if (postfix.equalsIgnoreCase("png") || postfix.equalsIgnoreCase("jpg")) {
                     holder.img.setImageResource(R.drawable.picture);
                 }
                     else {

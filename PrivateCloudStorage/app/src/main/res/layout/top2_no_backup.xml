@@ -7,21 +7,21 @@
     >
 
     <!--<com.beardedhen.androidbootstrap.BootstrapButton-->
-        <!--android:id="@+id/btn_mkdir"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:background="@drawable/button"-->
-        <!--android:paddingRight="1dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:drawableLeft="@drawable/adddir"-->
-        <!--android:text="新建文件夹"/>-->
+    <!--android:id="@+id/btn_mkdir"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:background="@drawable/button"-->
+    <!--android:paddingRight="1dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:drawableLeft="@drawable/adddir"-->
+    <!--android:text="新建文件夹"/>-->
 
     <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/btn_mkdir"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="11sp"
+        android:textSize="13sp"
         bootstrap:bb_icon_left="fa-folder"
         bootstrap:bb_type="primary"
         android:text="新建目录"/>
@@ -33,7 +33,7 @@
         android:layout_weight="1"
         bootstrap:bb_icon_left="fa-cloud-upload"
         bootstrap:bb_type="primary"
-        android:textSize="11sp"
+        android:textSize="13sp"
         android:text="上传云盘"
         />
     <com.beardedhen.androidbootstrap.BootstrapButton
@@ -44,19 +44,8 @@
         android:layout_weight="1"
         bootstrap:bb_icon_left="fa-list-ul"
         bootstrap:bb_type="primary"
-        android:textSize="11sp"
+        android:textSize="13sp"
         android:text="传输列表"
         />
 
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/btn_backup"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/list"
-        android:layout_weight="1"
-        bootstrap:bb_icon_left="fa-refresh"
-        bootstrap:bb_type="primary"
-        android:textSize="11sp"
-        android:text="一键备份"
-        />
 </LinearLayout>

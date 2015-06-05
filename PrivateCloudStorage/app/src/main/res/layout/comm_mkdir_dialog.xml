@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:background="#ffffffff"
+    android:orientation="horizontal"
+    android:id="@+id/comm_mkdir_dialog">
+    <!--<TextView android:layout_height="wrap_content"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:id="@+id/tvname" android:text="姓名：" />-->
+    <com.beardedhen.androidbootstrap.BootstrapEditText
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id="@+id/et_dir_name"
+        android:hint="输入文件夹名称"
+        android:gravity="left"
+        bootstrap:be_state="success"
+        />
+</LinearLayout>

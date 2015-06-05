@@ -47,6 +47,8 @@ public class NetConnection {
                             break;
                         case GET:
                             uc = new URL(url + "?" + paramsStr.toString()).openConnection();
+                            uc.setConnectTimeout(4000);
+                            uc.setReadTimeout(8000);
                             break;
                         default:
                             uc = new URL(url + "?" + paramsStr.toString()).openConnection();

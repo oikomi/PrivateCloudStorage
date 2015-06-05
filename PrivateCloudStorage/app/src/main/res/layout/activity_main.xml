@@ -9,13 +9,22 @@
     <include layout="@layout/top1" />
     <include layout="@layout/top2" />
 
-
+    <com.baoyz.widget.PullRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
     <ListView
         android:id="@+id/lv_file_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         ></ListView>
+
+        <!--<include layout="@layout/top3" />-->
+
+    </com.baoyz.widget.PullRefreshLayout>
 
     <include layout="@layout/top3" />
 

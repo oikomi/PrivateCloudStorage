@@ -10,6 +10,10 @@ public class GlobalSettings {
 
     public DownloadListFragment.MyAdapter mFragmentAdapter;
     public UploadListFragment.MyAdapter mFragmentAdapterUpload;
+    public DoneListFragment.MyAdapter mFragmentAdapterDone;
+
+    public DoneListFragment.DoneListRequestReceiver mDoneProgressReceiver;
+
     public ArrayList<Progress> data = new ArrayList<Progress>();
 
     public HashMap<String, Integer> dataMap = new HashMap<String, Integer>();
@@ -35,6 +39,19 @@ public class GlobalSettings {
 
 
     public int postIncUpload = 0;
+
+
+    public ArrayList<Progress> dataDone = new ArrayList<Progress>();
+
+    public HashMap<String, Integer> dataMapDone = new HashMap<String, Integer>();
+
+    public HashMap<String, Integer> dataIncMapDone = new HashMap<String, Integer>();
+
+    public HashMap<String, Boolean> downFlagDone = new HashMap<String, Boolean>();
+
+
+
+    public int postIncDone = 0;
 
 
     public long preSzie;

@@ -7,6 +7,7 @@ package com.yuchuan.privatecloudstorage.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -27,15 +28,40 @@ public class LogoActivity extends Activity {
 
         progressBar = (ProgressBar) findViewById(R.id.pgBar);
         backButton = (Button) findViewById(R.id.btn_back);
+        final Handler handler=new Handler();
 
-        Intent intent = new Intent(this, MainActivity.class);
-        LogoActivity.this.startActivity(intent);
+        final Runnable runnable=new Runnable(){
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                //要做的事情，这里再次调用此Runnable对象，以实现每两秒实现一次的定时器操作
+                Intent intent = new Intent(LogoActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                //handler.postDelayed(this, 2000);
+            }
+        };
+//
+//        Handler handler = new Handler() {
+//            public void hanldMessage(Message msg) {
+//                switch(msg.what) {
+//                    case 0:
+//                        Intent intent = new Intent(LogoActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                }
+//            }
+//        };
+        handler.postDelayed(runnable, 2000);
 
-        finish();
+//        Intent intent = new Intent(this, MainActivity.class);
+//        LogoActivity.this.startActivity(intent);
+
+        //finish();
 
         backButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                handler.removeCallbacks(runnable);
                 finish();
             }
         });

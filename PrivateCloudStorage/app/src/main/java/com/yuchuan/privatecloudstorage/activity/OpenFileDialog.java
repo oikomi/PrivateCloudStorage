@@ -8,9 +8,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.yuchuan.privatecloudstorage.R;
 
 /**
@@ -19,7 +19,7 @@ import com.yuchuan.privatecloudstorage.R;
 public class OpenFileDialog extends Dialog {
     private Context context;
     private BootstrapButton cancel;
-    private ProgressBar bar;
+    private NumberProgressBar bar;
     private LeaveMyDialogListener listener;
     private boolean mCacheFileFinishRegistered;
     private CacheFileFinishReceiver mCacheFileFinishReceiver;
@@ -89,7 +89,7 @@ public class OpenFileDialog extends Dialog {
 
     private void initView() {
         cancel = (BootstrapButton) findViewById(R.id.btn_cancle);
-        bar = (ProgressBar) findViewById(R.id.progressBar);
+        bar = (NumberProgressBar) findViewById(R.id.progressBar);
     }
 
     private void registerCacheFileProgressReceiver() {

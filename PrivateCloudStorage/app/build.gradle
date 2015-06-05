@@ -35,4 +35,14 @@ dependencies {
     compile files('libs/xUtils-2.6.14.jar')
     compile files('libs/gson-2.3.1.jar')
     compile 'com.beardedhen:androidbootstrap:+'
+    compile 'com.daimajia.numberprogressbar:library:1.2@aar'
+    compile 'com.wrapp.floatlabelededittext:library:0.0.6'
+
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.github.sd6352051.niftydialogeffects:niftydialogeffects:1.0.0@aar'
+
+    compile 'com.yalantis:contextmenu:1.0.2'
+    compile 'com.rengwuxian.materialedittext:library:1.8.3'
+
+    compile 'com.baoyz.pullrefreshlayout:library:1.0.1'
 }

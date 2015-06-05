@@ -31,7 +31,7 @@ public class TransferActivity extends FragmentActivity
 
     private TextView mChatTextView;
     private TextView mFriendTextView;
-    private TextView mContactTextView;
+    private TextView mDoneTextView;
     private LinearLayout mChatLinearLayout;
 
     private Button back;
@@ -58,7 +58,7 @@ public class TransferActivity extends FragmentActivity
         Display display = getWindow().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
-        mScreen1_3 = outMetrics.widthPixels / 2;
+        mScreen1_3 = outMetrics.widthPixels / 3;
         //LayoutParams lp = mTabline.getLayoutParams();
         //lp.width = mScreen1_3;
 //        mTabline.setLayoutParams(lp);
@@ -69,7 +69,7 @@ public class TransferActivity extends FragmentActivity
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
         mChatTextView = (TextView) findViewById(R.id.id_tv_chat);
         mFriendTextView = (TextView) findViewById(R.id.id_tv_friend);
-//        mContactTextView = (TextView) findViewById(R.id.id_tv_contact);
+        mDoneTextView = (TextView) findViewById(R.id.id_tv_done);
         mChatLinearLayout = (LinearLayout) findViewById(R.id.id_ll_chat);
 
         mDatas = new ArrayList<Fragment>();
@@ -84,11 +84,11 @@ public class TransferActivity extends FragmentActivity
 
         DownloadListFragment tab01 = new DownloadListFragment();
         UploadListFragment tab02 = new UploadListFragment();
-//        ContactMainTabFragment tab03 = new ContactMainTabFragment();
+        DoneListFragment tab03 = new DoneListFragment();
 
         mDatas.add(tab01);
         mDatas.add(tab02);
-//        mDatas.add(tab03);
+        mDatas.add(tab03);
 
         mAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
         {
@@ -121,9 +121,9 @@ public class TransferActivity extends FragmentActivity
                     case 1:
                         mFriendTextView.setTextColor(Color.parseColor("#008000"));
                         break;
-//                    case 2:
-//                        mContactTextView.setTextColor(Color.parseColor("#008000"));
-//                        break;
+                    case 2:
+                        mDoneTextView.setTextColor(Color.parseColor("#008000"));
+                        break;
 
                 }
 
@@ -150,11 +150,12 @@ public class TransferActivity extends FragmentActivity
 //                    lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_3 + (positionOffset - 1)
 //                            * mScreen1_3);
 
-                } //                } else if (mCurrentPageIndex == 1 && position == 1) // 1->2
-//                {
-//                    lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_3 + positionOffset
-//                            * mScreen1_3);
-//                } else if (mCurrentPageIndex == 2 && position == 1) // 2->1
+                }  else if (mCurrentPageIndex == 1 && position == 1) // 1->2
+                {
+                    //lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_3 + positionOffset
+                            //* mScreen1_3);
+                }
+                //else if (mCurrentPageIndex == 2 && position == 1) // 2->1
 //                {
 //                    lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_3 + ( positionOffset-1)
 //                            * mScreen1_3);
@@ -177,7 +178,7 @@ public class TransferActivity extends FragmentActivity
     {
         mChatTextView.setTextColor(Color.BLACK);
         mFriendTextView.setTextColor(Color.BLACK);
-//        mContactTextView.setTextColor(Color.BLACK);
+        mDoneTextView.setTextColor(Color.BLACK);
     }
 
 }

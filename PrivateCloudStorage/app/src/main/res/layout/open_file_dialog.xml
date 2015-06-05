@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="#ffc8d8ee"
     >
     <TextView
         android:id="@+id/info"
@@ -13,12 +14,19 @@
         android:gravity="left"
         />
 
-    <ProgressBar
+<!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--style="?android:attr/progressBarStyleHorizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:max="100" />-->
+
+    <com.daimajia.numberprogressbar.NumberProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:max="100" />
+        style="@style/NumberProgressBar_Default"
+        />
 
     <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/btn_cancle"
